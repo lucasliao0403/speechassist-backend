@@ -1,0 +1,19 @@
+{
+  "name": "dmoj-assistant",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "run"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.8",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "flatted": "^3.3.1",
+    "JSON": "^1.0.0",
+    "openai": "^4.37.1"
+  }
+}
