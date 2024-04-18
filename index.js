@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const fs = require('fs');
 const axios = require('axios');
+const cors = require('cors'); // Require CORS package
 const app = express();
 const port = 3000;
 
@@ -20,8 +21,14 @@ const storage = multer.diskStorage({
     filename: (req, file, cb) => {
       cb(null, "audio.wav");
     },
-  });
+});
 const upload = multer({ storage: storage });
+
+// Enable CORS for all routes, or customize per route as needed
+app.use(cors({
+  origin: 'http://localhost:3001',  // Adjust this if you're serving the front-end from other locations
+  credentials: true
+}));
 
 // ChatGPT endpoint
 app.get('/chatgpt', async (req, res) => {
@@ -47,14 +54,13 @@ app.post('/transcribe', upload.single('audio'), async (req, res) => {
       return res.status(400).send('No file uploaded.');
   }
   
-  // TODO: read file
-
+  // Read file
   try {
     const file = fs.createReadStream('./uploads/audio.wav');
     const transcript = await transcribe(file);
 
-    // console.log(transcript);
-    res.send(transcript)
+    console.log(transcript);
+    res.send(transcript);
   } catch (e) {
       console.log(e);
       res.sendStatus(500);
@@ -78,8 +84,6 @@ async function transcribe(file) {
   
     return response.data.text;
   }
-  
-
 
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
