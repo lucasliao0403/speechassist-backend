@@ -31,6 +31,25 @@ app.get('/chatgpt', async (req, res) => {
   
 });
 
+// Whisper endpoint for speech-to-text
+app.post('/transcribe', upload.single('audio'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).send('No file uploaded.');
+  }
+
+  try {
+    const transcription = await openai.audio.transcriptions.create({
+        audio_file: req.file.buffer,
+        model: "whisper-large", //whisper models
+    });
+
+    res.send(transcription);
+  } catch (e) {
+    console.log(e);
+    res.sendStatus(500);
+  }
+});
+
 app.listen(port, () => {
   console.log(`Interview-Assistant listening at http://localhost:${port}`);
 });
