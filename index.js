@@ -41,7 +41,7 @@ app.post('/chatgpt', async (req, res) => {
     const chatCompletion = await openai.chat.completions.create({
         messages: [{ 
             role: 'user', 
-            content: "Respond within 5 sentences. You are reviewing my response to this interview question:" + prompt + "User response:" + transcript
+            content: "Respond within 5 sentences. Respond using the same language as the user's reponse. You are reviewing my response to this interview question:" + prompt + "User response:" + transcript
         }],
         model: 'gpt-4-turbo',
         max_tokens: 250,
