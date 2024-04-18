@@ -1,5 +1,6 @@
 const express = require('express');
-const multer = require('multer');  
+const multer = require('multer');
+const cors = require('cors');
 const app = express();
 const port = 3000;
 
@@ -42,24 +43,25 @@ app.get('/chatgpt', async (req, res) => {
 // Whisper endpoint for speech-to-text
 app.post('/transcribe', upload.single('audio'), async (req, res) => {
   if (!req.file) {
-    return res.status(400).send('No file uploaded.');
+      return res.status(400).send('No file uploaded.');
   }
   
 
   console.log(req.file.buffer)
 
   try {
-    // const transcription = await openai.audio.transcriptions.create({
-    //     audio_file: req.file.buffer,
-    //     model: "whisper-large",
-    // });
+    const transcription = await openai.audio.transcriptions.create({
+        audio_file: req.file.buffer,
+        model: "whisper-large",
+    });
 
-    // res.send(transcription);
+    res.send(transcription);
   } catch (e) {
-    console.log(e);
-    res.sendStatus(500);
+      console.log(e);
+      res.sendStatus(500);
   }
 });
+
 
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
