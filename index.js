@@ -13,6 +13,9 @@ const openai = new OpenAI({
     api_key: process.env.OPEN_AI_KEY,
 });
 
+app.use(express.json());
+
+
 // Configure multer for file upload handling
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -33,11 +36,11 @@ app.use(cors({
 // ChatGPT endpoint
 app.post('/chatgpt', async (req, res) => {
   try {
-    // console.log(req.data)
+    const transcript = req.body.transcript;
     const chatCompletion = await openai.chat.completions.create({
         messages: [{ 
             role: 'user', 
-            content: 'tell me what day of the week it is.'
+            content: transcript
         }],
         model: 'gpt-4-turbo',
         max_tokens: 100,
@@ -59,8 +62,6 @@ app.post('/transcribe', upload.single('audio'), async (req, res) => {
   try {
     const file = fs.createReadStream('./uploads/audio.wav');
     const transcript = await transcribe(file);
-
-    console.log(transcript);
     res.send(transcript);
   } catch (e) {
       console.log(e);
