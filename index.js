@@ -37,13 +37,14 @@ app.use(cors({
 app.post('/chatgpt', async (req, res) => {
   try {
     const transcript = req.body.transcript;
+    const prompt = req.body.prompt
     const chatCompletion = await openai.chat.completions.create({
         messages: [{ 
             role: 'user', 
-            content: transcript
+            content: "Respond within 5 sentences. You are reviewing my response to this interview question:" + prompt + "User response:" + transcript
         }],
         model: 'gpt-4-turbo',
-        max_tokens: 100,
+        max_tokens: 250,
     });
     res.send(chatCompletion);
   } catch(e) {
