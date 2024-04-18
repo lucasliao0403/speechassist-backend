@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer');
-const cors = require('cors');
+const fs = require('fs');
+const axios = require('axios');
 const app = express();
 const port = 3000;
 
@@ -17,10 +18,10 @@ const storage = multer.diskStorage({
       cb(null, 'uploads/');
     },
     filename: (req, file, cb) => {
-      cb(null, Date.now() + '-' + file.originalname);
+      cb(null, "audio.wav");
     },
   });
-  const upload = multer({ storage: storage });
+const upload = multer({ storage: storage });
 
 // ChatGPT endpoint
 app.get('/chatgpt', async (req, res) => {
@@ -46,21 +47,38 @@ app.post('/transcribe', upload.single('audio'), async (req, res) => {
       return res.status(400).send('No file uploaded.');
   }
   
-
-  console.log(req.file.buffer)
+  // TODO: read file
 
   try {
-    const transcription = await openai.audio.transcriptions.create({
-        audio_file: req.file.buffer,
-        model: "whisper-large",
-    });
+    const file = fs.createReadStream('./uploads/audio.wav');
+    const transcript = await transcribe(file);
 
-    res.send(transcription);
+    // console.log(transcript);
+    res.send(transcript)
   } catch (e) {
       console.log(e);
       res.sendStatus(500);
   }
 });
+
+async function transcribe(file) {
+    const response = await axios.post(
+      'https://api.openai.com/v1/audio/transcriptions',
+      {
+        file,
+        model: 'whisper-1'
+      },
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
+        }
+      }
+    );
+  
+    return response.data.text;
+  }
+  
 
 
 app.listen(port, () => {
