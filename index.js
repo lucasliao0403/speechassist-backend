@@ -31,14 +31,15 @@ app.use(cors({
 }));
 
 // ChatGPT endpoint
-app.get('/chatgpt', async (req, res) => {
+app.post('/chatgpt', async (req, res) => {
   try {
+    // console.log(req.data)
     const chatCompletion = await openai.chat.completions.create({
         messages: [{ 
             role: 'user', 
-            content: 'Review this interview response to "What is your greatest weakness?": "My greatest weakness is that I am too smart"'
+            content: 'tell me what day of the week it is.'
         }],
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4-turbo',
         max_tokens: 100,
     });
     res.send(chatCompletion);
