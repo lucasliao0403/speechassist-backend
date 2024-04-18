@@ -23,6 +23,7 @@ app.get('/chatgpt', async (req, res) => {
             content: 'Review this interview response to "What is your greatest weakness?": "My greatest weakness is that I am too smart"'
         }],
         model: 'gpt-3.5-turbo',
+        max_tokens: 100,
     });
     res.send(chatCompletion);
   } catch(e) {
