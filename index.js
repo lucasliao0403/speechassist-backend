@@ -11,8 +11,15 @@ const openai = new OpenAI({
 });
 
 // Configure multer for file upload handling
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + '-' + file.originalname);
+    },
+  });
+  const upload = multer({ storage: storage });
 
 // ChatGPT endpoint
 app.get('/chatgpt', async (req, res) => {
@@ -37,14 +44,17 @@ app.post('/transcribe', upload.single('audio'), async (req, res) => {
   if (!req.file) {
     return res.status(400).send('No file uploaded.');
   }
+  
+
+  console.log(req.file.buffer)
 
   try {
-    const transcription = await openai.audio.transcriptions.create({
-        audio_file: req.file.buffer,
-        model: "whisper-large",
-    });
+    // const transcription = await openai.audio.transcriptions.create({
+    //     audio_file: req.file.buffer,
+    //     model: "whisper-large",
+    // });
 
-    res.send(transcription);
+    // res.send(transcription);
   } catch (e) {
     console.log(e);
     res.sendStatus(500);
